@@ -254,35 +254,52 @@ class Digraph(Graph):
                 self.graph[v].pop(u, None)
             del self.graph[u]
 
+class DoubleNode():
+    def __init__(self, _data):
+        self.data = _data
+        self.prev = None # 이전 노드를 가리키는 변수
+        self.next = None # 다음 노드를 가리키는 변수
 
-g = Digraph()
-g.add_edges(("A", "C", 4), ("B", "C", 2))
-g.add_edges(("C", "E", 3), ("C", "F", 5), ("D", "B", 3))
-g.add_edges(("E", "F", 1), ("F", "D", 2))
+class Deque:
+    def __init__(self):
+        self.head = None
+        self.tail = None
+        self.length = 0
 
-print("방향 그래프의 상태:")
-g.display()
+    def __len__(self):
+        return self.length
 
-print("노드 B부터 깊이 우선 탐색 결과:", g.dfs("B"))
-print()
-print("노드 B부터 너비 우선 탐색 결과:", g.bfs("B"))
-print("B에서 E로 가는 최소 경유 경로: ", g.get_path("E"))
-print("B에서 F로 가는 최소 경유 경로: ", g.get_path("F"))
-print("B에서 A로 가는 최소 경유 경로: ", g.get_path("A"))
-print()
+    def __str__(self):
+        if self.head is None:
+            return "Empty!"
+        res = ""
+        node = self.head
+        while node.next is not None:
+            res += str(node.data) + " ↔ "
+            node = node.next
+        return res + str(node.data)
 
-print("다익스트라 알고리즘으로 탐색")
-g.dijkstra("B")
-print("B에서 E로 가는 최단 경로: ", g.get_path("E"))
-print("B에서 F로 가는 최단 경로: ", g.get_path("F"))
-print("B에서 A로 가는 최단 경로: ", g.get_path("A"))
-print()
+    def __contains__(self, target):
+        if self.head is None:
+            return False
+        node = self.head
+        while node is not None:
+            if node.data == target:
+                return True
+            node = node.next
+        return False
+    
+    def appendleft(self, data):
+        if self.head is None:
+            self.head = self.tail = DoubleNode(data)
+        else:
+            new_node = DoubleNode(data)
+            new_node.next = self.head
+            self.head.prev = new_node
+            self.head = new_node
+        self.length += 1
 
-print("초기 방향 그래프의 상태:")
-g.display()
-print("간선 C-E를 삭제한 후의 상태")
-g.delete_edges(("C", "E"))
-g.display()
-print("노드 A와 F를 삭제한 후의 상태")
-g.delete_nodes("A", "F")
-g.display()
+deq = Deque()
+for i in range(4, -1, -1):
+   deq.appendleft(i)
+   print(f"{len(deq)}: {deq}")
